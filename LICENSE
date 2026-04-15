@@ -1,21 +1,7 @@
-MIT License
+Copyright (c) 2026 Youssef Moataz. All Rights Reserved.
 
-Copyright (c) 2026 Youssef Moataz
+This SQL Injection Assessment Report and all associated technical artifacts (custom scanners, exfiltrated data matrices, and forensic dashboards) are the exclusive property of Youssef Moataz.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Unauthorized reproduction, redistribution, or modification of the provided materials is strictly prohibited. 
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+This repository is published exclusively for educational and professional portfolio assessment. All rights to the original security signatures, analytical methodologies, and remediation frameworks are reserved by the author.

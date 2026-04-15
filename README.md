@@ -1,6 +1,10 @@
-# SQL Injection Assessment & Data Exfiltration Analysis
+# SQL-Injection-Audit-Portal: End-to-End Vulnerability Analysis
 
-This repository contains a technical security audit of SQL Injection vulnerabilities within a controlled DVWA environment. The project documents the complete attack lifecycle—from manual discovery and fingerprinting to automated exploitation and credential recovery.
+This repository contains a professional security audit of SQL Injection vulnerabilities. It documents a complete attack lifecycle—from initial heuristic discovery and schema mapping to automated exfiltration and credential recovery.
+
+**🔗 [Access Live Forensic Portal](https://lafandoor.github.io/SQL-Injection-Audit-Portal/)**
+
+---
 
 ## 🛡️ Assessment Highlights
 
