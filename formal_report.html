@@ -59,32 +59,32 @@
 
         <h2 class="section-header" style="margin-top: 4rem;">1. Executive Summary</h2>
         <p>
-            This audit identifies critical SQL injection flaws within the DVWA environment. Testing confirmed that the <code>id</code> parameter lacks adequate sanitization, enabling full exfiltration of the user database.
+            This audit details critical vulnerabilities identified within the DVWA platform. Exploitation of the <code>id</code> parameter confirmed that unsanitized input is passed directly to the database layer, allowing for unauthorized record retrieval.
         </p>
         <p style="margin-top: 1rem;">
-            Risk profile: <strong>CRITICAL</strong>. Immediate remediation through parameterized queries is mandatory.
+            Risk Status: <strong>CRITICAL</strong>. The application is vulnerable to full database compromise.
         </p>
     </div>
 
     <div class="report-page">
         <h2 class="section-header">2. Scope & Objectives</h2>
-        <p>Audit scope: SQL Injection module (DVWA). Security Level: LOW.</p>
+        <p>Assessment limited to the SQL Injection module (LOW security). Objectives:</p>
         <ul style="margin: 1.5rem 0 1.5rem 2rem;">
-            <li>Identification of unsanitized input vectors.</li>
-            <li>Verification of multi-vector SQLi (Blind, UNION).</li>
-            <li>Quantification of data leakage impact.</li>
-            <li>Validation of custom detection signatures.</li>
+            <li>Map attack surface for the <code>id</code> parameter.</li>
+            <li>Exploit Boolean, UNION, and Time-based vectors.</li>
+            <li>Measure impact on user data confidentiality.</li>
+            <li>Validate custom detection signatures.</li>
         </ul>
 
         <h2 class="section-header" style="margin-top: 3rem;">3. Technical Methodology</h2>
         <table class="matrix-table">
             <tr><th>Phase</th><th>Activity</th><th>Tools</th></tr>
-            <tr><td>Logic Probe</td><td>Heuristic testing via Boolean payloads.</td><td>DevTools</td></tr>
-            <tr><td>Automation</td><td>Database mapping and record dumping.</td><td>SQLMap</td></tr>
-            <tr><td>Custom Scripting</td><td>Signature validation and timing logs.</td><td>Python 3</td></tr>
+            <tr><td>Probing</td><td>Manual heuristic testing with Boolean logic.</td><td>DevTools</td></tr>
+            <tr><td>Automation</td><td>Database enumeration and exfiltration.</td><td>SQLMap</td></tr>
+            <tr><td>Logic Check</td><td>Bespoke script validation for timing logs.</td><td>Python 3</td></tr>
         </table>
 
-        <h3 style="margin-top: 2rem;">Session Auth Data</h3>
+        <h3 style="margin-top: 2rem;">Authentication State</h3>
         <pre style="background: #f0f0f0; padding: 1rem; border-radius: 4px; font-size: 0.8rem;">
 PHPSESSID=9e124456d84d6cd2cecb9df8d2f9c4d0; security=low
         </pre>
@@ -94,13 +94,13 @@ PHPSESSID=9e124456d84d6cd2cecb9df8d2f9c4d0; security=low
         <h2 class="section-header">4. Vulnerability Matrix</h2>
         <table class="matrix-table">
             <tr><th>Vulnerability</th><th>Severity</th><th>Impact</th></tr>
-            <tr><td>Time-Based Blind SQLi</td><td style="color: var(--danger); font-weight: bold;">CRITICAL</td><td>Data inference via <code>SLEEP()</code> commands.</td></tr>
-            <tr><td>UNION-Based SQLi</td><td style="color: var(--danger); font-weight: bold;">CRITICAL</td><td>Direct exfiltration of DB tables.</td></tr>
-            <tr><td>Weak Hash Storage</td><td style="color: #ff9900; font-weight: bold;">HIGH</td><td>MD5 hashes recovered and cracked.</td></tr>
+            <tr><td>Blind SQLi (Time-based)</td><td style="color: var(--danger); font-weight: bold;">CRITICAL</td><td>Information leakage via inference.</td></tr>
+            <tr><td>UNION-Based SQLi</td><td style="color: var(--danger); font-weight: bold;">CRITICAL</td><td>Bulk exfiltration of database entries.</td></tr>
+            <tr><td>MD5 Hash Exposure</td><td style="color: #ff9900; font-weight: bold;">HIGH</td><td>Credentials recovered and decrypted.</td></tr>
         </table>
 
         <h2 class="section-header" style="margin-top: 4rem;">5. Exfiltration Analysis</h2>
-        <p>Extractor success verified on <code>users</code> table.</p>
+        <p>Verified dump of the <code>users</code> table:</p>
         <table class="matrix-table" style="font-size: 0.85rem;">
             <thead><tr><th>User</th><th>MD5 Hash</th><th>Plaintext</th></tr></thead>
             <tbody>
@@ -114,22 +114,22 @@ PHPSESSID=9e124456d84d6cd2cecb9df8d2f9c4d0; security=low
     </div>
 
     <div class="report-page">
-        <h2 class="section-header">6. Appendix A: Evidence</h2>
+        <h2 class="section-header">6. Appendix: Evidence</h2>
         <div class="evidence-box">
-            <h4>Fig 1.1: Detection</h4>
+            <h4>Fig 1.1: Multi-vector Detection</h4>
             <img src="pics/Screenshot_2026-04-15_15_55_29.png">
         </div>
         <div class="evidence-box">
-            <h4>Fig 1.2: Mapping</h4>
+            <h4>Fig 1.2: Schema Enumeration</h4>
             <img src="pics/Screenshot_2026-04-15_15_55_54.png">
         </div>
     </div>
 
     <div class="report-page">
         <h2 class="section-header">7. Remediation</h2>
-        <p>Implementation of Prepared Statements (PDO) is the primary defense.</p>
+        <p>Immediate migration to Prepared Statements (PDO) is required.</p>
         <div class="evidence-box">
-            <h4>Secure Implementation Example</h4>
+            <h4>Secure Payload Handling (PHP)</h4>
             <pre style="background: #111; color: #eee; padding: 1rem; border-radius: 5px; font-size: 0.8rem;">
 $stmt = $pdo->prepare('SELECT * FROM users WHERE id = :id');
 $stmt->execute(['id' => $id]);
@@ -142,7 +142,7 @@ $stmt->execute(['id' => $id]);
                 <p style="font-family: 'Outfit'; font-size: 1.5rem;">Youssef Moataz</p>
             </div>
             <div>
-                <p><strong>ID:</strong></p>
+                <p><strong>AUDIT CODE:</strong></p>
                 <p style="color: #666; font-size: 0.8rem;">SEC-2026-SQLI</p>
             </div>
         </div>

