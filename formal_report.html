@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Injection Security Audit | Youssef Moataz</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f5f5f5; color: #1a1a1a; font-family: 'Inter', sans-serif; padding: 0; }
+        .report-page { background: white; width: 210mm; min-height: 297mm; margin: 2rem auto; padding: 2cm; box-shadow: 0 0 20px rgba(0,0,0,0.1); position: relative; }
+        .cover-page { display: flex; flex-direction: column; justify-content: center; height: 250mm; text-align: center; }
+        .cover-page h1 { font-size: 3.5rem; color: #000; margin-bottom: 1rem; border-bottom: 5px solid var(--accent-gold); padding-bottom: 1rem; }
+        .confidential-stamp { position: absolute; top: 2rem; right: 2rem; border: 4px solid var(--danger); color: var(--danger); padding: 0.5rem 1rem; font-weight: 900; font-family: 'Outfit'; transform: rotate(5deg); }
+        .section-header { border-bottom: 2px solid #eee; margin-bottom: 2rem; padding-bottom: 0.5rem; color: var(--accent-gold); text-transform: uppercase; font-size: 1.2rem; }
+        .toc { margin: 4rem 0; list-style: none; }
+        .toc li { margin-bottom: 0.8rem; display: flex; justify-content: space-between; border-bottom: 1px dotted #ccc; }
+        .evidence-box { background: #f9f9f9; border: 1px solid #ddd; padding: 1rem; margin: 1.5rem 0; border-radius: 8px; }
+        .evidence-box img { max-width: 100%; border: 1px solid #ddd; }
+        .matrix-table { width: 100%; border-collapse: collapse; margin: 2rem 0; }
+        .matrix-table th, .matrix-table td { border: 1px solid #ddd; padding: 1rem; text-align: left; }
+        .matrix-table th { background: #f0f0f0; }
+        @media print { .report-page { margin: 0; box-shadow: none; width: 100%; } .no-print { display: none; } }
+    </style>
+</head>
+<body>
+
+    <div class="no-print" style="position: fixed; top: 1rem; left: 1rem; z-index: 100;">
+        <button onclick="window.print()" class="btn"><i class="fas fa-print"></i> Print to PDF</button>
+        <a href="index.html" class="btn btn-outline" style="margin-left: 1rem;"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </div>
+
+    <div class="report-page">
+        <div class="confidential-stamp">CONFIDENTIAL</div>
+        <div class="cover-page">
+            <h4 style="letter-spacing: 5px; color: #666;">SECURITY AUDIT</h4>
+            <h1>SQL Injection Pentest Report</h1>
+            <p style="font-size: 1.2rem; margin-top: 2rem;">Infrastructure Assessment v1.0</p>
+            <div style="margin-top: 10rem;">
+                <p><strong>PREPARED BY:</strong></p>
+                <p style="font-size: 1.5rem; color: var(--accent-gold);">Youssef Moataz</p>
+                <p style="color: #666;">Security Researcher</p>
+                <p style="margin-top: 2rem;"><strong>DATE:</strong> April 15, 2026</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="report-page">
+        <h2 class="section-header">Contents</h2>
+        <ul class="toc">
+            <li><span>1. Executive Summary</span><span>02</span></li>
+            <li><span>2. Scope & Objectives</span><span>03</span></li>
+            <li><span>3. Methodology</span><span>04</span></li>
+            <li><span>4. Vulnerability Matrix</span><span>05</span></li>
+            <li><span>5. Exfiltration Analysis</span><span>06</span></li>
+            <li><span>6. Evidence Appendix</span><span>07</span></li>
+            <li><span>7. Remediation Strategy</span><span>09</span></li>
+        </ul>
+
+        <h2 class="section-header" style="margin-top: 4rem;">1. Executive Summary</h2>
+        <p>
+            This audit identifies critical SQL injection flaws within the DVWA environment. Testing confirmed that the <code>id</code> parameter lacks adequate sanitization, enabling full exfiltration of the user database.
+        </p>
+        <p style="margin-top: 1rem;">
+            Risk profile: <strong>CRITICAL</strong>. Immediate remediation through parameterized queries is mandatory.
+        </p>
+    </div>
+
+    <div class="report-page">
+        <h2 class="section-header">2. Scope & Objectives</h2>
+        <p>Audit scope: SQL Injection module (DVWA). Security Level: LOW.</p>
+        <ul style="margin: 1.5rem 0 1.5rem 2rem;">
+            <li>Identification of unsanitized input vectors.</li>
+            <li>Verification of multi-vector SQLi (Blind, UNION).</li>
+            <li>Quantification of data leakage impact.</li>
+            <li>Validation of custom detection signatures.</li>
+        </ul>
+
+        <h2 class="section-header" style="margin-top: 3rem;">3. Technical Methodology</h2>
+        <table class="matrix-table">
+            <tr><th>Phase</th><th>Activity</th><th>Tools</th></tr>
+            <tr><td>Logic Probe</td><td>Heuristic testing via Boolean payloads.</td><td>DevTools</td></tr>
+            <tr><td>Automation</td><td>Database mapping and record dumping.</td><td>SQLMap</td></tr>
+            <tr><td>Custom Scripting</td><td>Signature validation and timing logs.</td><td>Python 3</td></tr>
+        </table>
+
+        <h3 style="margin-top: 2rem;">Session Auth Data</h3>
+        <pre style="background: #f0f0f0; padding: 1rem; border-radius: 4px; font-size: 0.8rem;">
+PHPSESSID=9e124456d84d6cd2cecb9df8d2f9c4d0; security=low
+        </pre>
+    </div>
+
+    <div class="report-page">
+        <h2 class="section-header">4. Vulnerability Matrix</h2>
+        <table class="matrix-table">
+            <tr><th>Vulnerability</th><th>Severity</th><th>Impact</th></tr>
+            <tr><td>Time-Based Blind SQLi</td><td style="color: var(--danger); font-weight: bold;">CRITICAL</td><td>Data inference via <code>SLEEP()</code> commands.</td></tr>
+            <tr><td>UNION-Based SQLi</td><td style="color: var(--danger); font-weight: bold;">CRITICAL</td><td>Direct exfiltration of DB tables.</td></tr>
+            <tr><td>Weak Hash Storage</td><td style="color: #ff9900; font-weight: bold;">HIGH</td><td>MD5 hashes recovered and cracked.</td></tr>
+        </table>
+
+        <h2 class="section-header" style="margin-top: 4rem;">5. Exfiltration Analysis</h2>
+        <p>Extractor success verified on <code>users</code> table.</p>
+        <table class="matrix-table" style="font-size: 0.85rem;">
+            <thead><tr><th>User</th><th>MD5 Hash</th><th>Plaintext</th></tr></thead>
+            <tbody>
+                <tr><td>admin</td><td>5f4dcc3b5...</td><td><strong>password</strong></td></tr>
+                <tr><td>gordonb</td><td>e99a18c42...</td><td><strong>abc123</strong></td></tr>
+                <tr><td>1337</td><td>8d3533d75...</td><td><strong>charley</strong></td></tr>
+                <tr><td>pablo</td><td>0d107d09f...</td><td><strong>letmein</strong></td></tr>
+                <tr><td>smithy</td><td>5f4dcc3b5...</td><td><strong>password</strong></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="report-page">
+        <h2 class="section-header">6. Appendix A: Evidence</h2>
+        <div class="evidence-box">
+            <h4>Fig 1.1: Detection</h4>
+            <img src="pics/Screenshot_2026-04-15_15_55_29.png">
+        </div>
+        <div class="evidence-box">
+            <h4>Fig 1.2: Mapping</h4>
+            <img src="pics/Screenshot_2026-04-15_15_55_54.png">
+        </div>
+    </div>
+
+    <div class="report-page">
+        <h2 class="section-header">7. Remediation</h2>
+        <p>Implementation of Prepared Statements (PDO) is the primary defense.</p>
+        <div class="evidence-box">
+            <h4>Secure Implementation Example</h4>
+            <pre style="background: #111; color: #eee; padding: 1rem; border-radius: 5px; font-size: 0.8rem;">
+$stmt = $pdo->prepare('SELECT * FROM users WHERE id = :id');
+$stmt->execute(['id' => $id]);
+            </pre>
+        </div>
+
+        <div style="margin-top: 10rem; border-top: 2px solid #000; padding-top: 1rem; display: flex; justify-content: space-between;">
+            <div>
+                <p><strong>AUDITOR:</strong></p>
+                <p style="font-family: 'Outfit'; font-size: 1.5rem;">Youssef Moataz</p>
+            </div>
+            <div>
+                <p><strong>ID:</strong></p>
+                <p style="color: #666; font-size: 0.8rem;">SEC-2026-SQLI</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

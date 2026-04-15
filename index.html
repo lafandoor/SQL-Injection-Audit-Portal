@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Assessment Report | Youssef Moataz</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="hero">
+        <div class="badge">SEC-REPORT: SQLI-2026</div>
+        <h1>SQL Injection Assessment</h1>
+        <p>A technical breakdown of exploitation vectors, detection heuristics, and credential recovery chains on the DVWA platform.</p>
+        
+        <div class="container" style="margin-top: 4rem;">
+            <div class="stats-header">
+                <div class="stat-box">
+                    <span class="stat-val">11</span>
+                    <span class="stat-label">Total Payloads</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val" style="color: var(--danger);">CRITICAL</span>
+                    <span class="stat-label">Risk Rating</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-val">100%</span>
+                    <span class="stat-label">Exfiltration Rate</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 3rem; display: flex; gap: 1.5rem;">
+            <a href="formal_report.html" class="btn"><i class="fas fa-file-pdf"></i> Download Official Report</a>
+            <a href="#summary" class="btn btn-outline">Explore Findings</a>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <span style="color: var(--text-dim);">Conducted by</span>
+            <span style="color: var(--accent-gold); font-weight: 600;">Youssef Moataz</span>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <section id="summary">
+            <div class="card">
+                <h2 style="margin-bottom: 2rem;"><i class="fas fa-file-contract" style="color: var(--accent-gold); margin-right: 15px;"></i>Executive Summary</h2>
+                <p style="font-size: 1.1rem; color: var(--text-dim); margin-bottom: 2rem;">
+                    This assessment confirms deep-seated SQL injection vulnerabilities. By combining manual logic testing with advanced automation, I achieved full data exfiltration and compromise of all user accounts within the target environment.
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+                    <div>
+                        <h4 style="color: var(--accent-gold);">RISK LEVEL</h4>
+                        <p class="severity-high" style="font-size: 1.5rem;">CRITICAL</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--accent-gold);">TARGET INFRA</h4>
+                        <p>Nginx 1.28.0 / MySQL 5.0.12</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--accent-gold);">DATA LEAKAGE</h4>
+                        <p>Credentials + DB Structure</p>
+                    </div>
+                </div>
+                <div class="fingerprint-grid" style="margin-top: 3rem;">
+                    <div class="f-item">
+                        <h5>WEB SERVER</h5>
+                        <p>Nginx/1.28.0</p>
+                    </div>
+                    <div class="f-item">
+                        <h5>DATABASE</h5>
+                        <p>MySQL >= 5.0.12 (MariaDB fork)</p>
+                    </div>
+                    <div class="f-item">
+                        <h5>PLATFORM</h5>
+                        <p>PHP/8.4-mysql (DVWA)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="lifecycle">
+            <h2 style="text-align: center; margin-bottom: 3rem;">Attack Lifecycle</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h4>1. Reconnaissance</h4>
+                    <p>Identified input vector <code>id</code>. Server headers revealed Nginx/1.28.0 backend.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h4>2. Vulnerability Confirmation</h4>
+                    <p>Manual probes with <code>' OR 1=1 --</code> confirmed Boolean response shifts. SQLMap further identified Time-based (SLEEP) and UNION-based vectors.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h4>3. Database Mapping</h4>
+                    <p>Exfiltrated schema info, identifying <code>dvwa</code> and <code>information_schema</code>. Mapped table relations for target data.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <h4>4. Data Exfiltration</h4>
+                    <p>Recovered 5 administrative records, extracted MD5 hashes, and successfully decrypted them via dictionary attack.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="methodology">
+            <h2 style="text-align: center; margin-bottom: 3rem;">Technical Methodology</h2>
+            <div class="meth-grid">
+                <div class="card meth-item">
+                    <i class="fas fa-keyboard meth-icon"></i>
+                    <h3>Manual Logic</h3>
+                    <p>Testing unsanitized parameters with Boolean and Error-based payloads to identify underlying SQL flaws.</p>
+                </div>
+                <div class="card meth-item">
+                    <i class="fas fa-robot meth-icon"></i>
+                    <h3>Automation</h3>
+                    <p>Using SQLMap for automated database mapping and rapid concurrent record extraction.</p>
+                </div>
+                <div class="card meth-item">
+                    <i class="fas fa-code meth-icon"></i>
+                    <h3>Custom Tooling</h3>
+                    <p>Developing Python scripts for specialized timing analysis and heuristic-based signature detection.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="findings">
+            <h2 style="margin-bottom: 3rem;"><i class="fas fa-shield-virus" style="color: var(--accent-gold); margin-right: 15px;"></i>Exploitation Log</h2>
+            <div class="card">
+                <div class="terminal-window no-print" style="margin-bottom: 3rem;">
+                    <div class="terminal-header">
+                        <div class="t-dot" style="background: #ff5f56;"></div>
+                        <div class="t-dot" style="background: #ffbd2e;"></div>
+                        <div class="t-dot" style="background: #27c93f;"></div>
+                    </div>
+                    <div class="t-body">
+                        <div><span class="t-prompt">┌──(kali)-[~]</span></div>
+                        <div><span class="t-prompt">└─$</span> <span class="t-cmd">sqlmap -u "..." --cookie="..." --dump</span></div>
+                        <br>
+                        <div style="color: #A3BE8C;">[INFO] Parameter 'id' is vulnerable (MySQL).</div>
+                        <div style="color: #A3BE8C;">[INFO] Fetching entries for 'users' table.</div>
+                        <div style="color: #D08770;">[INFO] Starting dictionary attack (md5).</div>
+                        <div style="color: #EBCB8B;">[SUCCESS] Cracked 5/5 hashes.</div>
+                    </div>
+                </div>
+
+                <div class="findings-container">
+                    <div class="finding-row">
+                        <div>
+                            <h4>Time-Based Blind</h4>
+                            <p style="color: var(--text-dim);">Vulnerability confirmed via response delay payloads.</p>
+                        </div>
+                        <span class="severity-high">CRITICAL</span>
+                    </div>
+                    <div class="finding-row">
+                        <div>
+                            <h4>UNION-Based Exfiltration</h4>
+                            <p style="color: var(--text-dim);">Full database leakage achieved via UNION results.</p>
+                        </div>
+                        <span class="severity-high">CRITICAL</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="exfiltrated">
+            <h2 style="margin-bottom: 1rem;">Exfiltrated Data Set</h2>
+            <p style="color: var(--text-dim); margin-bottom: 3rem;">Database dump recovered during the final exfiltration phase.</p>
+            
+            <div class="card" style="padding: 1rem;">
+                <table class="exfil-matrix">
+                    <thead>
+                        <tr>
+                            <th>UID</th>
+                            <th>User</th>
+                            <th>MD5 Hash</th>
+                            <th>Status</th>
+                            <th>Plaintext</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>admin</td><td class="hash-dim">5f4dcc3b5...</td><td style="color: #27c93f;">CRACKED</td><td class="plaintext-gold">password</td></tr>
+                        <tr><td>2</td><td>gordonb</td><td class="hash-dim">e99a18c42...</td><td style="color: #27c93f;">CRACKED</td><td class="plaintext-gold">abc123</td></tr>
+                        <tr><td>3</td><td>1337</td><td class="hash-dim">8d3533d75...</td><td style="color: #27c93f;">CRACKED</td><td class="plaintext-gold">charley</td></tr>
+                        <tr><td>4</td><td>pablo</td><td class="hash-dim">0d107d09f...</td><td style="color: #27c93f;">CRACKED</td><td class="plaintext-gold">letmein</td></tr>
+                        <tr><td>5</td><td>smithy</td><td class="hash-dim">5f4dcc3b5...</td><td style="color: #27c93f;">CRACKED</td><td class="plaintext-gold">password</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="evidence">
+            <h2 style="margin-bottom: 1rem;">Technical Evidence</h2>
+            
+            <h3 style="color: var(--accent-gold); margin-bottom: 1.5rem;"><i class="fas fa-search" style="margin-right:10px;"></i>Phase A: Identification</h3>
+            <div class="gallery" style="margin-bottom: 4rem;">
+                <div class="gallery-item">
+                    <img src="pics/Screenshot_2026-04-15_15_50_52.png">
+                    <div class="gallery-overlay"><h4>Target App</h4><p>Landing on SQLi Module.</p></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="pics/Screenshot_2026-04-15_15_42_27.png">
+                    <div class="gallery-overlay"><h4>Dependencies</h4><p>Kali environment setup.</p></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="pics/Screenshot_2026-04-15_15_54_03.png">
+                    <div class="gallery-overlay"><h4>Cookie Recon</h4><p>Session mapping.</p></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="pics/Screenshot_2026-04-15_15_51_50.png">
+                    <div class="gallery-overlay"><h4>Manual Probe</h4><p>Boolean verification.</p></div>
+                </div>
+            </div>
+
+            <h3 style="color: var(--accent-gold); margin-bottom: 1.5rem;"><i class="fas fa-meteor" style="margin-right:10px;"></i>Phase B: Exploitation</h3>
+            <div class="gallery" style="margin-bottom: 4rem;">
+                <div class="gallery-item">
+                    <img src="pics/Screenshot_2026-04-15_15_54_40.png">
+                    <div class="gallery-overlay"><h4>Scan Start</h4><p>Heuristic probing.</p></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="pics/Screenshot_2026-04-15_15_55_29.png">
+                    <div class="gallery-overlay"><h4>Confirmation</h4><p>Vulnerability detected.</p></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="pics/Screenshot_2026-04-15_15_55_54.png">
+                    <div class="gallery-overlay"><h4>Mapping</h4><p>Table enumeration.</p></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="pics/Screenshot_2026-04-15_15_55_58.png">
+                    <div class="gallery-overlay"><h4>Recovery</h4><p>MD5 extraction.</p></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="pics/Screenshot_2026-04-15_15_56_00.png">
+                    <div class="gallery-overlay"><h4>Full Dump</h4><p>Credential recovery.</p></div>
+                </div>
+            </div>
+
+            <h3 style="color: var(--accent-gold); margin-bottom: 1.5rem;"><i class="fas fa-terminal" style="margin-right:10px;"></i>Phase C: Custom Proof</h3>
+            <div class="gallery">
+                <div class="gallery-item">
+                    <img src="pics/Screenshot_2026-04-15_15_57_45.png">
+                    <div class="gallery-overlay"><h4>Source</h4><p>sqli_scanner.py logic.</p></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="pics/Screenshot_2026-04-15_15_58_00.png">
+                    <div class="gallery-overlay"><h4>Execution</h4><p>Detections trace.</p></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="pics/Screenshot_2026-04-15_15_57_24.png">
+                    <div class="gallery-overlay"><h4>Attributes</h4><p>Record recovery.</p></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="pics/Screenshot_2026-04-15_16_06_33.png">
+                    <div class="gallery-overlay"><h4>Version 2</h4><p>Advanced trace logs.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="library">
+            <h2 style="margin-bottom: 3rem;">Payload Reference</h2>
+            <div class="card">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr><th>Type</th><th>Payload</th><th>Status</th><th>Result</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Boolean Bypass</td><td><span class="code-pill">1' OR '1'='1</span></td><td style="color: var(--danger);">VULN</td><td>Login Bypass</td></tr>
+                            <tr><td>UNION Attack</td><td><span class="code-pill">1' UNION SELECT null,version() --</span></td><td style="color: var(--danger);">SUCCESS</td><td>Version Leak</td></tr>
+                            <tr><td>Time-Based</td><td><span class="code-pill">1' AND SLEEP(5) --</span></td><td style="color: var(--danger);">VULN</td><td>Delay Confirmed</td></tr>
+                            <tr><td>Error-based</td><td><span class="code-pill">1' AND extractvalue(1,...)</span></td><td style="color: var(--danger);">SUCCESS</td><td>Direct Retrieval</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="code">
+            <div class="card">
+                <h2 style="margin-bottom: 2rem;">Detection Heuristics</h2>
+                <pre><code>
+def is_vulnerable(response, baseline, elapsed, payload):
+    response_lower = response.lower()
+    for indicator in SUCCESS_INDICATORS:
+        if indicator in response_lower:
+            return True, f"Found: {indicator}"
+    if "sleep" in payload.lower() and elapsed > 1.5:
+        return True, f"Time-delay confirmed ({elapsed:.2f}s)"
+    return False, "Safe"
+                </code></pre>
+            </div>
+        </section>
+
+        <section id="remediation">
+            <h2 style="margin-bottom: 3rem;">Remediation</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div class="card" style="border-left: 4px solid var(--accent-gold);">
+                    <h3>Prepared Statements</h3>
+                    <p style="margin-top: 1rem; color: var(--text-dim);">Using parameterized queries to decouple user data from SQL instruction, nullifying injection vectors.</p>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--accent-gold);">
+                    <h3>Input Sanitization</h3>
+                    <p style="margin-top: 1rem; color: var(--text-dim);">Strict type-enforcement and whitelist validation for every application entry point.</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Portfolio | Youssef Moataz | Security Assessment</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
