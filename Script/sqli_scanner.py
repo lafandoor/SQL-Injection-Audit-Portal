@@ -32,13 +32,6 @@ SUCCESS_INDICATORS = [
     "sql", "information_schema"
 ]
 
-def print_banner():
-    print("-" * 60)
-    print("SQL Injection Scanner")
-    print(f"Target: {TARGET_URL}")
-    print(f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("-" * 60)
-
 def get_baseline(session):
     try:
         resp = session.get(TARGET_URL, params={"id": "1", "Submit": "Submit"})
@@ -111,7 +104,6 @@ def print_summary(results, vuln_count):
     print("")
 
 def main():
-    print_banner()
     session = requests.Session()
     session.cookies.update(SESSION_COOKIE)
 

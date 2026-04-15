@@ -12,7 +12,7 @@
     <header class="hero">
         <div class="badge">SEC-REPORT: SQLI-2026</div>
         <h1>SQL Injection Assessment</h1>
-        <p>A technical breakdown of exploitation vectors, detection heuristics, and credential recovery chains on the DVWA platform.</p>
+        <p>A technical security audit detailing manual SQL injection testing and automated credential extraction on DVWA.</p>
         
         <div class="container" style="margin-top: 4rem;">
             <div class="stats-header">
@@ -32,8 +32,8 @@
         </div>
 
         <div style="margin-top: 3rem; display: flex; gap: 1.5rem;">
-            <a href="formal_report.html" class="btn"><i class="fas fa-file-pdf"></i> Download Official Report</a>
-            <a href="#summary" class="btn btn-outline">Explore Findings</a>
+            <a href="formal_report.html" class="btn"><i class="fas fa-file-contract"></i> View Formal Audit</a>
+            <a href="#summary" class="btn btn-outline">Explore SQLi Findings</a>
         </div>
 
         <div style="margin-top: 2rem;">
@@ -112,18 +112,18 @@
             <div class="meth-grid">
                 <div class="card meth-item">
                     <i class="fas fa-keyboard meth-icon"></i>
-                    <h3>Manual Logic</h3>
-                    <p>Testing unsanitized parameters with Boolean and Error-based payloads to identify underlying SQL flaws.</p>
+                    <h3>Manual Logic Flaws</h3>
+                    <p>Tested unsanitized input parameters with Boolean and Error-based payloads to map the backend database structure.</p>
                 </div>
                 <div class="card meth-item">
                     <i class="fas fa-robot meth-icon"></i>
-                    <h3>Automation</h3>
-                    <p>Using SQLMap for automated database mapping and rapid concurrent record extraction.</p>
+                    <h3>Automated Exploitation</h3>
+                    <p>Utilized SQLMap to automate schema enumeration and quickly dump administrative user records.</p>
                 </div>
                 <div class="card meth-item">
                     <i class="fas fa-code meth-icon"></i>
-                    <h3>Custom Tooling</h3>
-                    <p>Developing Python scripts for specialized timing analysis and heuristic-based signature detection.</p>
+                    <h3>Custom Security Tooling</h3>
+                    <p>Developed a Python script using requests to automate heuristic vulnerability detection for custom injection verification.</p>
                 </div>
             </div>
         </section>
@@ -196,67 +196,67 @@
         <section id="evidence">
             <h2 style="margin-bottom: 1rem;">Technical Evidence</h2>
             
-            <h3 style="color: var(--accent-gold); margin-bottom: 1.5rem;"><i class="fas fa-search" style="margin-right:10px;"></i>Phase A: Identification</h3>
+            <h3 style="color: var(--accent-gold); margin-bottom: 1.5rem;"><i class="fas fa-search" style="margin-right:10px;"></i>Step 1: Application Reconnaissance</h3>
             <div class="gallery" style="margin-bottom: 4rem;">
                 <div class="gallery-item">
                     <img src="pics/Screenshot_2026-04-15_15_50_52.png">
-                    <div class="gallery-overlay"><h4>Target App</h4><p>Landing on SQLi Module.</p></div>
+                    <div class="gallery-overlay"><h4>Target Application</h4><p>DVWA SQLi Module loaded.</p></div>
                 </div>
                 <div class="gallery-item">
                     <img src="pics/Screenshot_2026-04-15_15_42_27.png">
-                    <div class="gallery-overlay"><h4>Dependencies</h4><p>Kali environment setup.</p></div>
+                    <div class="gallery-overlay"><h4>Environment</h4><p>Kali Linux toolset initialized.</p></div>
                 </div>
                 <div class="gallery-item">
                     <img src="pics/Screenshot_2026-04-15_15_54_03.png">
-                    <div class="gallery-overlay"><h4>Cookie Recon</h4><p>Session mapping.</p></div>
+                    <div class="gallery-overlay"><h4>Session Config</h4><p>Capturing active PHP session tokens.</p></div>
                 </div>
                 <div class="gallery-item">
                     <img src="pics/Screenshot_2026-04-15_15_51_50.png">
-                    <div class="gallery-overlay"><h4>Manual Probe</h4><p>Boolean verification.</p></div>
+                    <div class="gallery-overlay"><h4>Manual Test</h4><p>Confirming Boolean vulnerability.</p></div>
                 </div>
             </div>
 
-            <h3 style="color: var(--accent-gold); margin-bottom: 1.5rem;"><i class="fas fa-meteor" style="margin-right:10px;"></i>Phase B: Exploitation</h3>
+            <h3 style="color: var(--accent-gold); margin-bottom: 1.5rem;"><i class="fas fa-meteor" style="margin-right:10px;"></i>Step 2: Automated Exploitation</h3>
             <div class="gallery" style="margin-bottom: 4rem;">
                 <div class="gallery-item">
                     <img src="pics/Screenshot_2026-04-15_15_54_40.png">
-                    <div class="gallery-overlay"><h4>Scan Start</h4><p>Heuristic probing.</p></div>
+                    <div class="gallery-overlay"><h4>SQLMap Init</h4><p>Starting heuristic scan.</p></div>
                 </div>
                 <div class="gallery-item">
                     <img src="pics/Screenshot_2026-04-15_15_55_29.png">
-                    <div class="gallery-overlay"><h4>Confirmation</h4><p>Vulnerability detected.</p></div>
+                    <div class="gallery-overlay"><h4>Vector Match</h4><p>Blind and UNION vectors confirmed.</p></div>
                 </div>
                 <div class="gallery-item">
                     <img src="pics/Screenshot_2026-04-15_15_55_54.png">
-                    <div class="gallery-overlay"><h4>Mapping</h4><p>Table enumeration.</p></div>
+                    <div class="gallery-overlay"><h4>Database Extracted</h4><p>Dumping 'users' table schema.</p></div>
                 </div>
                 <div class="gallery-item">
                     <img src="pics/Screenshot_2026-04-15_15_55_58.png">
-                    <div class="gallery-overlay"><h4>Recovery</h4><p>MD5 extraction.</p></div>
+                    <div class="gallery-overlay"><h4>Hash Retrieval</h4><p>Targeting MD5 credentials.</p></div>
                 </div>
                 <div class="gallery-item">
                     <img src="pics/Screenshot_2026-04-15_15_56_00.png">
-                    <div class="gallery-overlay"><h4>Full Dump</h4><p>Credential recovery.</p></div>
+                    <div class="gallery-overlay"><h4>Data Dump</h4><p>Passwords successfully extracted.</p></div>
                 </div>
             </div>
 
-            <h3 style="color: var(--accent-gold); margin-bottom: 1.5rem;"><i class="fas fa-terminal" style="margin-right:10px;"></i>Phase C: Custom Proof</h3>
+            <h3 style="color: var(--accent-gold); margin-bottom: 1.5rem;"><i class="fas fa-terminal" style="margin-right:10px;"></i>Step 3: Custom Python Scanner</h3>
             <div class="gallery">
                 <div class="gallery-item">
                     <img src="pics/Screenshot_2026-04-15_15_57_45.png">
-                    <div class="gallery-overlay"><h4>Source</h4><p>sqli_scanner.py logic.</p></div>
+                    <div class="gallery-overlay"><h4>Custom Script</h4><p>Writing target scanner in Python.</p></div>
                 </div>
                 <div class="gallery-item">
                     <img src="pics/Screenshot_2026-04-15_15_58_00.png">
-                    <div class="gallery-overlay"><h4>Execution</h4><p>Detections trace.</p></div>
+                    <div class="gallery-overlay"><h4>Test Output</h4><p>Confirming logic triggers.</p></div>
                 </div>
                 <div class="gallery-item">
                     <img src="pics/Screenshot_2026-04-15_15_57_24.png">
-                    <div class="gallery-overlay"><h4>Attributes</h4><p>Record recovery.</p></div>
+                    <div class="gallery-overlay"><h4>Exfiltration Hook</h4><p>Testing manual hash extraction.</p></div>
                 </div>
                 <div class="gallery-item">
                     <img src="pics/Screenshot_2026-04-15_16_06_33.png">
-                    <div class="gallery-overlay"><h4>Version 2</h4><p>Advanced trace logs.</p></div>
+                    <div class="gallery-overlay"><h4>Final Run</h4><p>Successful detection logs.</p></div>
                 </div>
             </div>
         </section>
